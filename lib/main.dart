@@ -14,7 +14,7 @@ class MyApp extends StatefulWidget {
 
 // 轉換成私有類
 class _MyAppState extends State<MyApp> {
-  final questions = [
+  final questions = const [
     {
       'question': 'What\'s your favorite color?',
       'answers': ['Black', 'Red', 'Green', 'White']
@@ -34,26 +34,32 @@ class _MyAppState extends State<MyApp> {
 
   // 函示宣告(私有函式)
   void _answerQuestion() {
+    if (_questionIndex >= questions.length) {
+      return;
+    }
+
     setState(() {
-      if (++_questionIndex >= questions.length) {
-        _questionIndex = 0;
-      }
+      _questionIndex++;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     var appBar = AppBar(title: Text('First App'));
-    var appBody = Column(
-      children: [
-        // 使用as確認類型
-        Question(questions[_questionIndex]['question'] as String),
-        // 使用callback
-        ...(questions[_questionIndex]['answers'] as List<String>).map((answer) {
-          return Answer(_answerQuestion, answer);
-        }).toList(),
-      ],
-    );
+    var appBody = _questionIndex < questions.length
+        ? Column(
+            children: [
+              // 使用as確認類型
+              Question(questions[_questionIndex]['question'] as String),
+              // 使用callback
+              ...(questions[_questionIndex]['answers'] as List<String>)
+                  .map((answer) => Answer(_answerQuestion, answer))
+                  .toList(),
+            ],
+          )
+        : Center(
+            child: Text('You did it!'),
+          );
 
     return MaterialApp(
         home: Scaffold(
