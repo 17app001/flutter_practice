@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use, avoid_print
-
 import 'package:flutter/material.dart';
+import './question.dart';
+import './answer.dart';
 
 void main() => runApp(MyApp());
 
@@ -14,17 +15,28 @@ class MyApp extends StatefulWidget {
 // 轉換成私有類
 class _MyAppState extends State<MyApp> {
   final questions = [
-    'What\'s your favorite color?',
-    'What\'s your favorite animal?',
+    {
+      'question': 'What\'s your favorite color?',
+      'answers': ['Black', 'Red', 'Green', 'White']
+    },
+    {
+      'question': 'What\'s your favorite animal?',
+      'answers': ['Rabbit', 'Dog', 'Cat', 'Bird']
+    },
+    {
+      'question': 'What\'s your favorite habit?',
+      'answers': ['Reading', 'Walking', 'Coding', 'Playing']
+    },
   ];
 
-  int questionIndex = 0;
+  // 增加底線私有屬性
+  int _questionIndex = 0;
 
-  // 函示宣告
-  void answerQuestion() {
+  // 函示宣告(私有函式)
+  void _answerQuestion() {
     setState(() {
-      if (++questionIndex >= questions.length) {
-        questionIndex = 0;
+      if (++_questionIndex >= questions.length) {
+        _questionIndex = 0;
       }
     });
   }
@@ -34,15 +46,12 @@ class _MyAppState extends State<MyApp> {
     var appBar = AppBar(title: Text('First App'));
     var appBody = Column(
       children: [
-        Text(questions.elementAt(questionIndex)),
-        // 匿名函示用法
-        RaisedButton(child: Text('Answer1'), onPressed: () => print('answer1')),
-        RaisedButton(
-            child: Text('Answer2'),
-            onPressed: () {
-              print('answer2');
-            }),
-        RaisedButton(child: Text('Answer3'), onPressed: answerQuestion),
+        // 使用as確認類型
+        Question(questions[_questionIndex]['question'] as String),
+        // 使用callback
+        ...(questions[_questionIndex]['answers'] as List<String>).map((answer) {
+          return Answer(_answerQuestion, answer);
+        }).toList(),
       ],
     );
 
