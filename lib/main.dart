@@ -48,6 +48,13 @@ class _MyAppState extends State<MyApp> {
   int _questionIndex = 0;
   int _totalScore = 0;
 
+  void _resetQuiz() {
+    setState(() {
+      _questionIndex = 0;
+      _totalScore = 0;
+    });
+  }
+
   // 函示宣告(私有函式)
   void _answerQuestion(int score) {
     if (_questionIndex >= _questions.length) {
@@ -68,7 +75,7 @@ class _MyAppState extends State<MyApp> {
             questions: _questions,
             questionIndex: _questionIndex,
           )
-        : Result(_totalScore);
+        : Result(_resetQuiz, _totalScore);
 
     return MaterialApp(
         home: Scaffold(
