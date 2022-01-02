@@ -1,7 +1,7 @@
 // ignore_for_file: deprecated_member_use, avoid_print
 import 'package:flutter/material.dart';
-import './question.dart';
-import './answer.dart';
+import './quiz.dart';
+import './result.dart';
 
 void main() => runApp(MyApp());
 
@@ -14,30 +14,46 @@ class MyApp extends StatefulWidget {
 
 // 轉換成私有類
 class _MyAppState extends State<MyApp> {
-  final questions = const [
+  final _questions = const [
     {
       'question': 'What\'s your favorite color?',
-      'answers': ['Black', 'Red', 'Green', 'White']
+      'answers': [
+        {'text': 'Black', 'score': 10},
+        {'text': 'Red', 'score': 20},
+        {'text': 'Green', 'score': 30},
+        {'text': 'White', 'score': 0},
+      ]
     },
     {
       'question': 'What\'s your favorite animal?',
-      'answers': ['Rabbit', 'Dog', 'Cat', 'Bird']
+      'answers': [
+        {'text': 'Rabbit', 'score': 30},
+        {'text': 'Dog', 'score': 20},
+        {'text': 'Cat', 'score': 0},
+        {'text': 'Bird', 'score': 10},
+      ]
     },
     {
       'question': 'What\'s your favorite habit?',
-      'answers': ['Reading', 'Walking', 'Coding', 'Playing']
+      'answers': [
+        {'text': 'Reading', 'score': 10},
+        {'text': 'Walking', 'score': 0},
+        {'text': 'Coding', 'score': 20},
+        {'text': 'Playing', 'score': 40},
+      ]
     },
   ];
 
   // 增加底線私有屬性
   int _questionIndex = 0;
+  int _totalScore = 0;
 
   // 函示宣告(私有函式)
-  void _answerQuestion() {
-    if (_questionIndex >= questions.length) {
+  void _answerQuestion(int score) {
+    if (_questionIndex >= _questions.length) {
       return;
     }
-
+    _totalScore += score;
     setState(() {
       _questionIndex++;
     });
@@ -46,20 +62,13 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     var appBar = AppBar(title: Text('First App'));
-    var appBody = _questionIndex < questions.length
-        ? Column(
-            children: [
-              // 使用as確認類型
-              Question(questions[_questionIndex]['question'] as String),
-              // 使用callback
-              ...(questions[_questionIndex]['answers'] as List<String>)
-                  .map((answer) => Answer(_answerQuestion, answer))
-                  .toList(),
-            ],
+    var appBody = _questionIndex < _questions.length
+        ? Quiz(
+            answerQuestion: _answerQuestion,
+            questions: _questions,
+            questionIndex: _questionIndex,
           )
-        : Center(
-            child: Text('You did it!'),
-          );
+        : Result(_totalScore);
 
     return MaterialApp(
         home: Scaffold(
